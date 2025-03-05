@@ -3,7 +3,51 @@ from itertools import combinations
 
 df = pd.read_csv('employee.csv')
 
-# WE NEED TO ADD A CHECK TO DETERMINE MAKE SURE WE DONT MAKE COMBINATIONS WITH PRIMARY KEYS
+normalization2_violations = []
+normalization3_violations = []
+
+def check_is_1nf(df):
+    return all(df[col].apply(lambda x: isinstance(x, (int, float, str))).all() for col in df.columns)
+
+def check_is_2nf(functional_dependencies, primary_key):
+    """
+    Check if the given functional dependencies satisfy 2NF.
+    
+    Args:
+        functional_dependencies (list of tuples): List of (determinant, dependent) pairs.
+        primary_key (set): The primary key of the table.
+    
+    Returns:
+        bool: True if the table is in 2NF, False otherwise.
+    """
+    for determinant, dependent in functional_dependencies:
+        # Check if the determinant is a subset of the primary key
+        if not primary_key.issubset(determinant):
+            return False  # Partial dependency found, not in 2NF
+    return True  # No partial dependencies, table is in 2NF
+
+
+def check_is_3nf(functional_dependencies, primary_key):
+    """
+    Check if the given functional dependencies satisfy 3NF.
+    
+    Args:
+        functional_dependencies (list of tuples): List of (determinant, dependent) pairs.
+        primary_key (set): The primary key of the table.
+    
+    Returns:
+        bool: True if the table is in 3NF, False otherwise.
+    """
+    for determinant, dependent in functional_dependencies:
+        # Skip if the dependent is part of the primary key
+        if dependent in primary_key:
+            continue
+        # Check if the determinant is a superset of the primary key
+        if not primary_key.issubset(determinant):
+            return False  # Transitive dependency found, not in 3NF
+    return True  # No transitive dependencies, table is in 3NF
+
+# Generates all possible depedencies
 def find_functional_dependencies(df):
     """
     Identifies functional dependencies in a given DataFrame.
@@ -38,38 +82,23 @@ def find_functional_dependencies(df):
     
     return functional_dependencies
 
-normalization2_violations = []
-normalization3_violations = []
-
 # Step 2: Check Normalization (1NF, 2NF, 3NF)
 # NEEDS TO UPDATED TO POP functional_dependencies array is 2nf or 3f rules are broken
-# More rules can be added
 # ONLY CHECKS FOR PRIMARY KEY StudentID
 def check_normalization(df, functional_dependencies):
     # Check 1NF: Ensure atomicity of values
-    is_1nf = all(df[col].apply(lambda x: isinstance(x, (int, float, str))).all() for col in df.columns)
+    is_1nf = check_is_1nf(df)
     
     # Check 2NF: No partial dependencies
     is_2nf = True
     # NEEDS TO BE UPDATED FOR EVERY TABLE
     primary_key = {'EmployeeID'}  # Replace with your primary key
-    for determinant, dependent in functional_dependencies:
-        if not primary_key.issubset(determinant):
-            is_2nf = False
-            normalization2_violations.append((determinant, dependent)) 
+    is_2nf = check_is_2nf(functional_dependencies, primary_key)
             # break
     
     # Check 3NF: No transitive dependencies
     is_3nf = True
-    for determinant, dependent in functional_dependencies:
-        if dependent in primary_key:
-            continue
-        # If 3NF is violated
-        if not primary_key.issubset(determinant):
-            is_3nf = False
-            print(f"{determinant} -> {dependent}")
-            normalization3_violations.append((determinant, dependent)) 
-            # break
+    is_3nf = check_is_3nf(functional_dependencies, primary_key)
     
     return is_1nf, is_2nf, is_3nf
 
@@ -90,5 +119,5 @@ if __name__ == "__main__":
     print(f"3NF: {'Yes' if is_3nf else 'No'}")
     
     # Print out violators
-    # print(len(normalization2_violations))
-    # print(len(normalization3_violations))
+    print(len(normalization2_violations))
+    print(len(normalization3_violations))
