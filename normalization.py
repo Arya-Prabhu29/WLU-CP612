@@ -3,6 +3,7 @@ from itertools import combinations
 
 df = pd.read_csv('employee.csv')
 
+# WE NEED TO ADD A CHECK TO DETERMINE MAKE SURE WE DONT MAKE COMBINATIONS WITH PRIMARY KEYS
 def find_functional_dependencies(df):
     """
     Identifies functional dependencies in a given DataFrame.
@@ -55,7 +56,7 @@ def check_normalization(df, functional_dependencies):
     for determinant, dependent in functional_dependencies:
         if not primary_key.issubset(determinant):
             is_2nf = False
-            # normalization2_violations 
+            normalization2_violations.append((determinant, dependent)) 
             # break
     
     # Check 3NF: No transitive dependencies
@@ -63,8 +64,11 @@ def check_normalization(df, functional_dependencies):
     for determinant, dependent in functional_dependencies:
         if dependent in primary_key:
             continue
+        # If 3NF is violated
         if not primary_key.issubset(determinant):
             is_3nf = False
+            print(f"{determinant} -> {dependent}")
+            normalization3_violations.append((determinant, dependent)) 
             # break
     
     return is_1nf, is_2nf, is_3nf
@@ -84,3 +88,7 @@ if __name__ == "__main__":
     print(f"1NF: {'Yes' if is_1nf else 'No'}")
     print(f"2NF: {'Yes' if is_2nf else 'No'}")
     print(f"3NF: {'Yes' if is_3nf else 'No'}")
+    
+    # Print out violators
+    # print(len(normalization2_violations))
+    # print(len(normalization3_violations))
