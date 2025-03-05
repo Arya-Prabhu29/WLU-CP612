@@ -112,13 +112,13 @@ contract_job_df = generate_contract_job_data(employee_ids=employee_df['EmployeeI
 salary_df = generate_salary_data(employee_ids=employee_df['EmployeeID'])
 
 # Save datasets to CSV files
-department_df.to_csv('department_data.csv', index=False)
-project_df.to_csv('project_data.csv', index=False)
-employee_df.to_csv('employee_data.csv', index=False)
-employee_contacts_df.to_csv('employee_contacts_data.csv', index=False)
-benefits_package_df.to_csv('benefits_package_data.csv', index=False)
-interns_df.to_csv('interns_data.csv', index=False)
-contract_job_df.to_csv('contract_job_data.csv', index=False)
-salary_df.to_csv('salary_data.csv', index=False)
+department_df.to_csv('department.csv', index=False)
+project_df.to_csv('project.csv', index=False)
+employee_df.to_csv('employee.csv', index=False)
+employee_contacts_df.to_csv('employee_contacts.csv', index=False)
+benefits_package_df.to_csv('benefits_package.csv', index=False)
+interns_df.to_csv('interns.csv', index=False)
+contract_job_df.to_csv('contract_job.csv', index=False)
+salary_df.to_csv('salary.csv', index=False)
 
 print("Synthetic datasets generated and saved to CSV files.")

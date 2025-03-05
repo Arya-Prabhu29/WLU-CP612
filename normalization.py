@@ -1,7 +1,7 @@
 import pandas as pd
 from itertools import combinations
 
-df = pd.read_csv('employee_data.csv')
+df = pd.read_csv('employee.csv')
 
 def find_functional_dependencies(df):
     """
@@ -37,20 +37,26 @@ def find_functional_dependencies(df):
     
     return functional_dependencies
 
+normalization2_violations = []
+normalization3_violations = []
+
 # Step 2: Check Normalization (1NF, 2NF, 3NF)
 # NEEDS TO UPDATED TO POP functional_dependencies array is 2nf or 3f rules are broken
 # More rules can be added
+# ONLY CHECKS FOR PRIMARY KEY StudentID
 def check_normalization(df, functional_dependencies):
     # Check 1NF: Ensure atomicity of values
     is_1nf = all(df[col].apply(lambda x: isinstance(x, (int, float, str))).all() for col in df.columns)
     
     # Check 2NF: No partial dependencies
     is_2nf = True
-    primary_key = {'StudentID'}  # Replace with your primary key
+    # NEEDS TO BE UPDATED FOR EVERY TABLE
+    primary_key = {'EmployeeID'}  # Replace with your primary key
     for determinant, dependent in functional_dependencies:
         if not primary_key.issubset(determinant):
             is_2nf = False
-            break
+            # normalization2_violations 
+            # break
     
     # Check 3NF: No transitive dependencies
     is_3nf = True
@@ -59,7 +65,7 @@ def check_normalization(df, functional_dependencies):
             continue
         if not primary_key.issubset(determinant):
             is_3nf = False
-            break
+            # break
     
     return is_1nf, is_2nf, is_3nf
 
