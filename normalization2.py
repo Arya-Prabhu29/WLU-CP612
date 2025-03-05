@@ -51,8 +51,9 @@ def check_is_3nf(functional_dependencies, primary_key):
         # Skip if the dependent is part of the primary key
         if dependent in primary_key:
             continue
-        # Check if the determinant is a superset of the primary key
+        # Check if the determinant is a superkey (i.e., contains a candidate key)
         if not primary_key.issubset(determinant):
+            # If the determinant is not a superkey, and the dependent is a non-prime attribute, it violates 3NF
             return False  # Transitive dependency found, not in 3NF
     return True  # No transitive dependencies, table is in 3NF
 
