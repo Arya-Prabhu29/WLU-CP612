@@ -1,7 +1,6 @@
 import pandas as pd
 from itertools import combinations
-
-df = pd.read_csv('employee.csv')
+from pathlib import Path
 
 
 def check_is_1nf(df):
@@ -57,7 +56,9 @@ def check_is_3nf(functional_dependencies, primary_key):
 
 # Generates all possible depedencies
 
-# HINT: 
+# HINT:
+
+
 def find_functional_dependencies(df):
     """
     Identifies functional dependencies in a given DataFrame.
@@ -120,17 +121,30 @@ def check_normalization(df, functional_dependencies):
 
 # Main execution
 if __name__ == "__main__":
-    # Find functional dependencies
-    fds = find_functional_dependencies(df)
 
-    print("Functional Dependencies:")
-    print("All possible functional dependencies: ", len(fds))
-    # for fd in fds[100:120]:
-    #     print(f"{fd[0]} -> {fd[1]}")
+    # Specify the folder path
+    folder_path = Path('data')
 
-    # Check normalization
-    is_1nf, is_2nf, is_3nf = check_normalization(df, fds)
-    print("\nNormalization Analysis:")
-    print(f"1NF: {'Yes' if is_1nf else 'No'}")
-    print(f"2NF: {'Yes' if is_2nf else 'No'}")
-    print(f"3NF: {'Yes' if is_3nf else 'No'}")
+    # Get a list of all files in the folder
+    files = [f for f in folder_path.iterdir() if f.is_file()]
+
+    print(files)
+
+    for file in files:
+        print("Analysis for ", file.name)
+        df = pd.read_csv(file)  # Use the full path to the file
+        # Find functional dependencies
+        fds = find_functional_dependencies(df)
+
+        print("Functional Dependencies:")
+        print("All possible functional dependencies: ", len(fds))
+        # for fd in fds[100:120]:
+        #     print(f"{fd[0]} -> {fd[1]}")
+
+        # Check normalization
+        is_1nf, is_2nf, is_3nf = check_normalization(df, fds)
+        print("\nNormalization Analysis:")
+        print(f"1NF: {'Yes' if is_1nf else 'No'}")
+        print(f"2NF: {'Yes' if is_2nf else 'No'}")
+        print(f"3NF: {'Yes' if is_3nf else 'No'}")
+        print("***************************")
