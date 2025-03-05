@@ -3,10 +3,16 @@ from itertools import combinations
 
 df = pd.read_csv('employee.csv')
 
-normalization2_violations = []
-normalization3_violations = []
-
 def check_is_1nf(df):
+    """
+    Check if the given functional dependencies satisfy 1NF.
+    
+    Args:
+        df (dataframe): the current data frame being analyzed
+    
+    Returns:
+        bool: True if the table is in 1NF, False otherwise.
+    """
     return all(df[col].apply(lambda x: isinstance(x, (int, float, str))).all() for col in df.columns)
 
 def check_is_2nf(functional_dependencies, primary_key):
@@ -83,8 +89,9 @@ def find_functional_dependencies(df):
     return functional_dependencies
 
 # Step 2: Check Normalization (1NF, 2NF, 3NF)
-# NEEDS TO UPDATED TO POP functional_dependencies array is 2nf or 3f rules are broken
-# ONLY CHECKS FOR PRIMARY KEY StudentID
+# 1. NEEDS TO UPDATED TO POP functional_dependencies array is 2nf or 3f rules are broken
+# 2. ONLY CHECKS FOR PRIMARY KEY StudentID
+# 3. Needs to check for forgein keys
 def check_normalization(df, functional_dependencies):
     # Check 1NF: Ensure atomicity of values
     is_1nf = check_is_1nf(df)
@@ -118,6 +125,3 @@ if __name__ == "__main__":
     print(f"2NF: {'Yes' if is_2nf else 'No'}")
     print(f"3NF: {'Yes' if is_3nf else 'No'}")
     
-    # Print out violators
-    print(len(normalization2_violations))
-    print(len(normalization3_violations))
