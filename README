@@ -1,0 +1,7 @@
+
+1. Run fake.py using
+    python fake.py
+This will generate our folder 'data' and csv files
+
+2. Run normalization.py using
+    python normalization.py

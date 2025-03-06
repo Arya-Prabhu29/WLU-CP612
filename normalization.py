@@ -1,6 +1,7 @@
 import pandas as pd
 from itertools import combinations
 from pathlib import Path
+import random
 
 
 def check_is_1nf(df):
@@ -28,9 +29,11 @@ def check_is_2nf(functional_dependencies, primary_key):
         bool: True if the table is in 2NF, False otherwise.
     """
     for determinant, dependent in functional_dependencies:
-        # Check if the determinant is a subset of the primary key
-        if not primary_key.issubset(determinant):
-            return False  # Partial dependency found, not in 2NF
+        # Check if the determinant is a proper subset of the primary key
+        if determinant.issubset(primary_key) and determinant != primary_key:
+            # If the dependent is a non-prime attribute, it violates 2NF
+            if dependent not in primary_key:
+                return False  # Partial dependency found, not in 2NF
     return True  # No partial dependencies, table is in 2NF
 
 
@@ -54,9 +57,7 @@ def check_is_3nf(functional_dependencies, primary_key):
             return False  # Transitive dependency found, not in 3NF
     return True  # No transitive dependencies, table is in 3NF
 
-# Generates all possible depedencies
-
-# HINT:
+# Generates all possible dependencies
 
 
 def find_functional_dependencies(df):
@@ -96,24 +97,16 @@ def find_functional_dependencies(df):
     return functional_dependencies
 
 # Step 2: Check Normalization (1NF, 2NF, 3NF)
-# 1. NEEDS TO UPDATED TO POP functional_dependencies array is 2nf or 3f rules are broken
-# 2. ONLY CHECKS FOR PRIMARY KEY StudentID
-# 3. Needs to check for forgein keys
 
 
-def check_normalization(df, functional_dependencies):
+def check_normalization(df, functional_dependencies, primary_key):
     # Check 1NF: Ensure atomicity of values
     is_1nf = check_is_1nf(df)
 
     # Check 2NF: No partial dependencies
-    is_2nf = True
-    # NEEDS TO BE UPDATED FOR EVERY TABLE
-    primary_key = {'EmployeeID'}  # Replace with your primary key
     is_2nf = check_is_2nf(functional_dependencies, primary_key)
-    # break
 
     # Check 3NF: No transitive dependencies
-    is_3nf = True
     is_3nf = check_is_3nf(functional_dependencies, primary_key)
 
     return is_1nf, is_2nf, is_3nf
@@ -128,21 +121,51 @@ if __name__ == "__main__":
     # Get a list of all files in the folder
     files = [f for f in folder_path.iterdir() if f.is_file()]
 
-    print(files)
+    print("Files found:", files)
 
     for file in files:
         print("Analysis for ", file.name)
         df = pd.read_csv(file)  # Use the full path to the file
+
+        # Determine the primary key based on the file path
+        if file.name == 'benefits_package.csv':
+            primary_key = {'EmployeeID'}
+        elif file.name == 'contract_job.csv':
+            primary_key = {'ContractID', 'EmployeeID'}
+        elif file.name == 'department.csv':
+            primary_key = {'DepartmentID'}
+        elif file.name == 'employee.csv':
+            primary_key = {'EmployeeID'}
+        elif file.name == 'employee_contacts.csv':
+            primary_key = {'EmployeeID'}
+        elif file.name == 'interns.csv':
+            primary_key = {'CollegeID', 'InternName'}
+        elif file.name == 'project.csv':
+            primary_key = {'ProjectID'}
+        elif file.name == 'salary.csv':
+            primary_key = {'EmployeeID', 'PayrollDate'}
+        else:
+            primary_key = set()  # Default to an empty set if no match
+
         # Find functional dependencies
         fds = find_functional_dependencies(df)
 
-        print("Functional Dependencies:")
-        print("All possible functional dependencies: ", len(fds))
-        # for fd in fds[100:120]:
-        #     print(f"{fd[0]} -> {fd[1]}")
+        print(f"\nTotal number of functional dependencies: {len(fds)}")
+        if len(fds) < 5:
+            for fd in fds:
+                print(f"Determinant: {fd[0]}, Dependent: {fd[1]}")
+
+        elif len(fds) > 10:
+            for i in range(0, 5):
+                fd = random.choice(fds)
+                print(f"Determinant: {fd[0]}, Dependent: {fd[1]}")
+
+        elif len(fds) > 5:
+            for fd in fds[0:5]:
+                print(f"Determinant: {fd[0]}, Dependent: {fd[1]}")
 
         # Check normalization
-        is_1nf, is_2nf, is_3nf = check_normalization(df, fds)
+        is_1nf, is_2nf, is_3nf = check_normalization(df, fds, primary_key)
         print("\nNormalization Analysis:")
         print(f"1NF: {'Yes' if is_1nf else 'No'}")
         print(f"2NF: {'Yes' if is_2nf else 'No'}")
