@@ -153,16 +153,16 @@ if __name__ == "__main__":
         print(f"\nTotal number of functional dependencies: {len(fds)}")
         if len(fds) < 5:
             for fd in fds:
-                print(f"Determinant: {fd[0]}, Dependent: {fd[1]}")
+                print(f"Determinant: {fd[0]} -> Dependent: {fd[1]}")
 
         elif len(fds) > 10:
             for i in range(0, 5):
                 fd = random.choice(fds)
-                print(f"Determinant: {fd[0]}, Dependent: {fd[1]}")
+                print(f"Determinant: {fd[0]} ->  Dependent: {fd[1]}")
 
-        elif len(fds) > 5:
+        elif len(fds) >= 5:
             for fd in fds[0:5]:
-                print(f"Determinant: {fd[0]}, Dependent: {fd[1]}")
+                print(f"Determinant: {fd[0]} ->  Dependent: {fd[1]}")
 
         # Check normalization
         is_1nf, is_2nf, is_3nf = check_normalization(df, fds, primary_key)

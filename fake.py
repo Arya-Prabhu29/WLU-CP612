@@ -13,7 +13,7 @@ def generate_department_data(num_rows=100):
     data = {
         # Primary Key
         'DepartmentID': [fake.unique.random_number(digits=3) for _ in range(num_rows)],
-        'DepartmentName': [fake.company() for _ in range(num_rows)],
+        'DepartmentName': [fake.unique.company() for _ in range(num_rows)],
         'NumberOfEmployees': [fake.random_number(digits=3) for _ in range(num_rows)]
     }
     return pd.DataFrame(data)
